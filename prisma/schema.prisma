@@ -1,0 +1,59 @@
+// Fustana Dress Store — Prisma schema
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Product {
+  id            String   @id @default(cuid())
+  title         String
+  description   String
+  price         Float
+  compareAtPrice Float?
+  category      String
+  sizes         String   @default("[]") // JSON array, e.g. ["XS","S","M","L"]
+  colors        String   @default("[]") // JSON array, e.g. ["E zeze","Bardhe","Rozë"]
+  images        String   @default("[]") // JSON array of image URLs
+  featured      Boolean  @default(false)
+  inStock       Boolean  @default(true)
+  rating        Float    @default(5)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([category])
+}
+
+model Order {
+  id            String   @id @default(cuid())
+  orderNumber   String   @unique
+  firstName     String
+  lastName      String
+  phone         String
+  email         String?
+  address       String
+  city          String?
+  notes         String?
+  items         String   @default("[]") // JSON array of {productId,title,price,qty,size,color,image}
+  subtotal      Float
+  shipping      Float    @default(0)
+  total         Float
+  status        String   @default("Në Pritje")
+  paymentMethod String   @default("Para në dorë")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([status])
+}
+
+model Admin {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  passwordHash String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
